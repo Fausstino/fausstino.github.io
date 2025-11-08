@@ -1,26 +1,163 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Redirecting...</title>
-    <meta http-equiv="refresh" content="0;url=v2raytun://import/https://nl.foxvpn1.com/sub/QlNLSkcsMTc2MjU0MjgxMQOTBEXzmweq">
+    <title>Redirecting to V2RayTun...</title>
+    <meta charset="UTF-8">
     <script>
-        // Мгновенный редирект
-        window.location.href = 'v2raytun://import/https://nl.foxvpn1.com/sub/QlNLSkcsMTc2MjU0MjgxMQOTBEXzmweq';
-        
-        // Резервные методы
-        setTimeout(() => {
-            window.location.replace('v2raytun://import/https://nl.foxvpn1.com/sub/QlNLSkcsMTc2MjU0MjgxMQOTBEXzmweq');
-        }, 50);
-        
-        // Для iOS
-        setTimeout(() => {
-            window.open('v2raytun://import/https://nl.foxvpn1.com/sub/QlNLSkcsMTc2MjU0MjgxMQOTBEXzmweq', '_self');
-        }, 100);
+        // Функция для получения параметра из URL
+        function getUrlParameter(name) {
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+            var results = regex.exec(window.location.href);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        // Получаем ссылку для редиректа из параметра URL
+        function getRedirectUrl() {
+            // Пробуем разные варианты параметров
+            var redirectTo = getUrlParameter('redirect_to') || 
+                            getUrlParameter('url') ||
+                            getUrlParameter('link') ||
+                            window.location.hash.substring(1);
+            
+            if (redirectTo) {
+                return redirectTo;
+            }
+            
+            // Если параметров нет, можно использовать путь
+            var path = window.location.pathname;
+            if (path && path !== '/') {
+                return path.substring(1);
+            }
+            
+            return null;
+        }
+
+        // Выполняем редирект
+        function performRedirect() {
+            var redirectUrl = getRedirectUrl();
+            
+            if (redirectUrl) {
+                console.log('Redirecting to:', redirectUrl);
+                
+                // Основной редирект
+                window.location.href = redirectUrl;
+                
+                // Резервные методы
+                setTimeout(function() {
+                    window.location.replace(redirectUrl);
+                }, 50);
+                
+                setTimeout(function() {
+                    window.open(redirectUrl, '_self');
+                }, 100);
+                
+                // Если все методы не сработали, показываем кнопку
+                setTimeout(function() {
+                    showManualRedirect(redirectUrl);
+                }, 1000);
+                
+            } else {
+                // Если ссылки нет, показываем ошибку
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        // Показывает кнопку для ручного редиректа
+        function showManualRedirect(url) {
+            var manualDiv = document.getElementById('manualRedirect');
+            var link = document.getElementById('manualLink');
+            link.href = url;
+            manualDiv.style.display = 'block';
+        }
+
+        // Запускаем при загрузке страницы
+        window.onload = function() {
+            performRedirect();
+        };
     </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .button {
+            background: #3498db;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 18px;
+            margin: 10px;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+        .button:hover {
+            background: #2980b9;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>🔄 Перенаправление в V2RayTun</h1>
+        
+        <div id="loading">
+            <div class="loader"></div>
+            <p>Перенаправляем в приложение...</p>
+        </div>
+
+        <div id="manualRedirect" class="hidden">
+            <h2>Автоматическое перенаправление не сработало</h2>
+            <p>Нажмите кнопку ниже для ручного открытия:</p>
+            <a href="#" id="manualLink" class="button">📱 Открыть в V2RayTun</a>
+        </div>
+
+        <div id="error" class="hidden">
+            <h2>❌ Ошибка</h2>
+            <p>Не указана ссылка для перенаправления.</p>
+            <p>Используйте URL вида:</p>
+            <code>https://fausstiono.github.io/?redirect_to=v2raytun://import/ВАША_ССЫЛКА</code>
+        </div>
+    </div>
+
     <noscript>
-        <meta http-equiv="refresh" content="0;url=v2raytun://import/https://nl.foxvpn1.com/sub/QlNLSkcsMTc2MjU0MjgxMQOTBEXzmweq">
+        <div class="container">
+            <h2>JavaScript отключен</h2>
+            <p>Для автоматического перенаправления включите JavaScript.</p>
+        </div>
     </noscript>
 </body>
 </html>
